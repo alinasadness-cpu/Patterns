@@ -1,14 +1,15 @@
-name: Java CI with Selenide
+name: Java CI with Gradle
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v3
     
@@ -18,20 +19,13 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     
-    - name: Grant execute permission for gradlew
+    - name: Make gradlew executable
       run: chmod +x gradlew
-    
-    - name: Start SUT
+        
+    - name: Start application
       run: |
-        java -jar artifacts/app-replan-delivery.jar &
-        sleep 10
-    
+        java -jar ./artifacts/app-replan-delivery.jar &
+        sleep 15
+        
     - name: Run tests
-      run: ./gradlew test --info
-      
-    - name: Upload test report
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-          name: test-results
-          path: build/reports/tests/
+      run: ./gradlew test
